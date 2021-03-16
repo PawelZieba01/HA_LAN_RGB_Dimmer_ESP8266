@@ -74,23 +74,26 @@ class ESP_uRGBDimmer:
             self.status = msg
 
         #odebrano wiadomość z jasnością
-        if(topic == self.topic_sub_brightness):
+        elif(topic == self.topic_sub_brightness):
             if(int(msg) < 2):
                 self.brightness = 0
-                self.status == b'OFF'
             else:
                 self.brightness = int(msg)
 
         #odebrano wiadomość z kolorem rgb
-        if(topic == self.topic_sub_rgb):
+        elif(topic == self.topic_sub_rgb):
             rgb = msg.decode().split(',')
             self.rgbw[0] = int(rgb[0])
             self.rgbw[1] = int(rgb[1])
             self.rgbw[2] = int(rgb[2])
 
         # odebrano wiadomość z wartością bieli
-        if(topic == self.topic_sub_white):
+        elif(topic == self.topic_sub_white):
             self.rgbw[3] = int(msg)
+
+        #wyłączenie światła gdy jasność ustawiona na 0
+        if(self.brightness == 0):
+            self.status = b'OFF'
 
         self.update_states()            #aktualizacja stanów na serwerze
         self.set_pwm()                  #ustawienie wartości PWM
@@ -104,10 +107,10 @@ class ESP_uRGBDimmer:
         white_val = bytes(str(self.rgbw[3]), 'utf-8')
 
         #wysłanie danych
-        self.client.publish(self.topic_pub_state, status_val)
         self.client.publish(self.topic_pub_brightness, brightness_val)
         self.client.publish(self.topic_pub_rgb, rgb_val)
         self.client.publish(self.topic_pub_white, white_val)
+        self.client.publish(self.topic_pub_state, status_val)
 
     #funkcja włączająca PWM
     def set_pwm(self):
