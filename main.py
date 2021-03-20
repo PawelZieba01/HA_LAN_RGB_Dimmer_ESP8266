@@ -1,23 +1,43 @@
 import ESP_uNetwork
 from ESP_uRGBDimmer import ESP_uRGBDimmer
-from time import sleep,time
-import network
+from utime import sleep, ticks_ms
+from machine import Pin
+
 
 print("Starting main.py...........")
 
-MyNet = ESP_uNetwork.ESP_uNetwork()
-MyNet.set_net_config("bestconnect.pl 130", "pawel130", "192.168.1.60", "192.168.1.1")
-MyNet.connect_to_AP()
+myNet = ESP_uNetwork.ESP_uNetwork()
+myNet.set_net_config("bestconnect.pl 130", "pawel130", "192.168.1.60", "192.168.1.1")
+myNet.connect_to_AP()
 
-import webrepl
-webrepl.start()
+# import webrepl
+# webrepl.start()
 
-DimmerRGB = ESP_uRGBDimmer("config.json")
+dimmerRGB = ESP_uRGBDimmer("config.json")
 
-client = DimmerRGB.connect_and_subscribe()
-DimmerRGB.update_states()
+dimmerRGB.connect_and_subscribe()
+dimmerRGB.update_states()
+
+
+led = Pin(2, Pin.OUT)
+led.value(1)
+
+
+
+
+
 
 while True:
-    client.check_msg()
-    # sleep(1)
-    # print("dziala")
+    dimmerRGB.get_mqtt_data()       # pobranie wiadomości z serwera i wykonanie poleceń
+    dimmerRGB.let_there_be_light()
+
+
+
+
+
+
+
+
+
+
+
