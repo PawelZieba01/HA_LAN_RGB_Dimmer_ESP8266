@@ -6,8 +6,7 @@ from machine import Pin
 
 print("Starting main.py...........")
 
-myNet = ESP_uNetwork.ESP_uNetwork()
-myNet.set_net_config("bestconnect.pl 130", "pawel130", "192.168.1.60", "192.168.1.1")
+myNet = ESP_uNetwork.ESP_uNetwork("config.json")
 myNet.connect_to_AP()
 
 import webrepl
